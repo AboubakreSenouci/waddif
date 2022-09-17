@@ -32,8 +32,10 @@ router.get("/", (req, res) => {
         err.message || "Some error occurred while retrieving tutorials."
     })});
 
-
-
-
+router.get("/work_From_Home", (req, res) => {
+    Jobs.findAndCountAll({where: {category: 'work from home'}}).then((data) => {
+        res.send(data)
+    })
+})
 
 module.exports = router;

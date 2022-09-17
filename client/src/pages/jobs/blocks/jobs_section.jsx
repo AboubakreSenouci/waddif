@@ -1,22 +1,27 @@
 import { useEffect, useState } from 'react'
 import Pagination from './pagination'
 import axios from 'axios'
-
+import { useSearchParams} from 'react-router-dom'
 
 
 export default function JobsSection () {
   const [jobs, setJobs] = useState([])
-  const [currentPage, setCurrentPage] = useState(0)
   const [nombrePages, setNombrePages] = useState(10)
+  let [searchParams, setSearchParams] = useSearchParams({
+    page: '0',
+  });
 
   useEffect(() => {
-    axios.get("http://localhost:3001/Jobs").then((response) => {
+    axios.get(`http://localhost:3001/Jobs?page=${searchParams.get('page')}`).then((response) => {
       setJobs(response.data.jobs)
-      setCurrentPage(response.data.currentPage)
-      setNombrePages(response.data.totalPages)
-  
     })
-  },[]);
+  },[searchParams]);
+
+  const updatePageNumber = (pageNumber) => {
+    setSearchParams({
+      page: pageNumber.toString(),
+    })
+  }
  
   return (
     <div>
@@ -26,7 +31,7 @@ export default function JobsSection () {
                     date={jobe.date} category={jobe.category} description={jobe.description}/>
             ))}
         </div>
-       <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} npages={nombrePages}/>
+       <Pagination currentPage={parseInt(searchParams.get('page'), 10)} updatePageNumber={updatePageNumber} npages={nombrePages}/>
     </div>
   )
 }

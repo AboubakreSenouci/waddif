@@ -1,4 +1,3 @@
-import React from 'react'
 import Navbar from './blocks/navbar'
 import Header from './blocks/header'
 import JobsSection from './blocks/jobs_section'

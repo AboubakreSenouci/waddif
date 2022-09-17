@@ -60,6 +60,8 @@ type Props = {
   all : boolean,
   arr: string[]
 }
+
+
 const Filter = ({ name, arr, all }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -82,7 +84,7 @@ const Filter = ({ name, arr, all }: Props) => {
     setHasAll(bool)
   }, [checkedState])
   const handleAllClick = () => {
-    const updatedCheckedState = checkedState.map((item) => false)
+    const updatedCheckedState = checkedState.map(() => false)
     setCheckedState(updatedCheckedState)
   }
   return (
