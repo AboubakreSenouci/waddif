@@ -9,17 +9,15 @@ type Props = {
 
 export default function Pagination ({ npages, currentPage, updatePageNumber }: Props) {
 
-
-
   const pageNumbers = useMemo(() => {
     return [...Array(npages + 1).keys()].slice(1)
   }, [npages]);
 
   const nextPage = () => {
-    if (currentPage < npages - 1) { updatePageNumber(currentPage+1) }
+    if (currentPage < npages - 1) { updatePageNumber( currentPage + 1 ) }
   }
   const prevPage = () => {
-    if (currentPage > 0) { updatePageNumber(currentPage-1)  }
+    if (currentPage > 0) { updatePageNumber( currentPage - 1 )  }
   }
 
   return (

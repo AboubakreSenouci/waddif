@@ -2,7 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const {Jobs} = require('../models')
-const jobs = require("../controllers/Jobs.controller.js")
+
 
 const getPagination = (page, size) => {
     const limit = size? +size : 10;
@@ -29,12 +29,20 @@ router.get("/", (req, res) => {
         res.send(response);
     }).catch(err => {
         message:
-        err.message || "Some error occurred while retrieving tutorials."
+        err.message || "Some error occurred while retrieving jobs."
     })});
 
+
 router.get("/work_From_Home", (req, res) => {
-    Jobs.findAndCountAll({where: {category: 'work from home'}}).then((data) => {
-        res.send(data)
+
+    const { page, size } = req.query;
+    const { limit, offset } = getPagination(page, size);
+    Jobs.findAndCountAll({where: {category: 'work from home'}, limit, offset}).then((data) => {
+        const response = getPaginateData(data, page ,limit)
+        res.send(response);
+    }).catch(err => {
+        message:
+        err.message || "Some error occured while retrieving jobs"
     })
 })
 

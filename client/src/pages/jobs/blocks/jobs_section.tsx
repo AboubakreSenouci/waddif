@@ -1,27 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Pagination from './pagination'
-import axios from 'axios'
-import { useSearchParams} from 'react-router-dom'
+import { JobContext, JobsContextInterface } from '../../../api/jobs'
 
 
-export default function JobsSection () {
-  const [jobs, setJobs] = useState([])
-  const [nombrePages, setNombrePages] = useState(10)
-  let [searchParams, setSearchParams] = useSearchParams({
-    page: '0',
-  });
+const JobsSection: React.FC = () => {
 
-  useEffect(() => {
-    axios.get(`http://localhost:3001/Jobs?page=${searchParams.get('page')}`).then((response) => {
-      setJobs(response.data.jobs)
-    })
-  },[searchParams]);
-
-  const updatePageNumber = (pageNumber) => {
+  const updatePageNumber = (pageNumber: { toString: () => any }) => {
     setSearchParams({
       page: pageNumber.toString(),
     })
   }
+  const {jobs, nombrePages, searchParams, setSearchParams} = useContext(JobContext) as JobsContextInterface;
  
   return (
     <div>
@@ -35,8 +24,19 @@ export default function JobsSection () {
     </div>
   )
 }
+export default JobsSection;
 
-const Job = ({ title, company, location, date, category, description }) => {
+
+interface JobProps {
+  title: string,
+  company: string,
+  location: string,
+  date: string,
+  category: string,
+  description: string,
+}
+
+const Job: React.FC<JobProps> = ({ title, company, location, date, category, description }: JobProps) => {
   return (
         <div className="bg-white border border-gray-300 min-w-2xl shadow-md p-6 pr-12">
             <p className="text-blue-600 font-medium">{title}</p>

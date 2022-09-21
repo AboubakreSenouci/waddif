@@ -1,4 +1,3 @@
-import * as React from 'react'
 import Button from '../../../component/button/button'
 import { BsSearch } from 'react-icons/bs'
 import { GoSettings } from 'react-icons/go'

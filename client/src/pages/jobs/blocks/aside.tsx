@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { IoIosArrowDropdown } from 'react-icons/io'
 import { motion } from 'framer-motion'
 
@@ -6,7 +7,7 @@ const filters = [
   {
     title: 'Quick Filters ',
     all: false,
-    arr: ['work from home']
+    arr: ['work from home'],
   },
   {
     title: 'Country',
@@ -41,32 +42,49 @@ const filters = [
 ]
 
 export default function Aside () {
+
+  const [selectedState, setSelectedState] = useState(0)
+  const [SearchParams, setSearchParams] = useSearchParams();
+  
+  const calculateSelectedState = (elemnt: boolean) => {
+    if(elemnt === true) {setSelectedState( selectedState - 1 )}
+    else setSelectedState( selectedState + 1 )
+  }
+
   return (
     <div className="bg-white border border-gray-300 lg:hidden w-96 px-4 h-min">
       <div>
         <p className="font-medium pt-4"> Filters </p>
-        <p className="text-gray-400 text-xs pb-3 pt-1">0 filters selected</p>
+        <p className="text-gray-400 text-xs pb-3 pt-1">{selectedState} filters selected</p>
         <div className="h-px w-full bg-gray-300"></div>
       </div>
       {filters.map((filter, index) => (
-        <Filter key={index} name={filter.title} arr={filter.arr} all={filter.all} />
+        <Filter key={index} name={filter.title} arr={filter.arr} all={filter.all} 
+        calculateSelectedState={calculateSelectedState} setSelectedState={setSelectedState} selectedState={selectedState}
+        />
       ))}
     </div>
   )
 }
 
+
 type Props = {
   name: string,
   all : boolean,
-  arr: string[]
+  arr: string[],
+  selectedState: number,
+  calculateSelectedState: (element: boolean) => void,
+  setSelectedState: (item: number) => void
+
 }
 
+const Filter = ({ name, arr, all, selectedState, setSelectedState,  calculateSelectedState }: Props) => {
 
-const Filter = ({ name, arr, all }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
 
+  const [counter, setCounter] = useState(0)
   const [checkedState, setCheckedState] = useState(
-    [...Array.from({ length: arr.length })]
+    [...Array.from({ length: arr.length })].map(() => false) 
   )
   const [hasAll, setHasAll] = useState(all)
 
@@ -75,22 +93,33 @@ const Filter = ({ name, arr, all }: Props) => {
       index === position ? (!item) : (item)
     )
     setCheckedState(updatedCheckedState)
+    calculateSelectedState(checkedState[position])
   }
+
   useEffect(() => {
-    let bool = true
+    let bool = true;
+    let counter = 0;
     checkedState.forEach((item) => {
-      if (item) { bool = false }
+      if (item === true) {
+         bool = false 
+         counter ++
+        }
     })
+    setCounter(counter)
     setHasAll(bool)
   }, [checkedState])
+
   const handleAllClick = () => {
     const updatedCheckedState = checkedState.map(() => false)
+    const newArray = checkedState.filter((item) => item === true)
+    setSelectedState(selectedState - newArray.length)
     setCheckedState(updatedCheckedState)
   }
+
   return (
     <div>
       <div className='flex items-center justify-between'>
-        <p className='text-sm font-medium py-4'>{name}</p>
+        <p className=' flex text-sm font-medium py-4'>{name}{counter>0 &&<p className='bg-blue-100 text-blue-600 mx-2 px-1 rounded'>{counter}</p>}</p>
         <motion.button onClick={() => setIsOpen(!isOpen)} animate={{ rotate: isOpen ? 180 : 0 }}>
           <IoIosArrowDropdown className='text-xl' />
         </motion.button>
