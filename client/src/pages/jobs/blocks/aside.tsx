@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useContext, useEffect, useState } from 'react'
+
 import { IoIosArrowDropdown } from 'react-icons/io'
 import { motion } from 'framer-motion'
+import { JobContext, JobsContextInterface } from '../../../api/jobs'
+
 
 const filters = [
   {
@@ -32,7 +34,7 @@ const filters = [
   {
     title: 'Job Type',
     all: false,
-    arr: ['Internship', 'Part time', 'Full time']
+    arr: ['work from home','Internship', 'Part time', 'Full time']
   },
   {
     title: 'Date Posted',
@@ -44,7 +46,6 @@ const filters = [
 export default function Aside () {
 
   const [selectedState, setSelectedState] = useState(0)
-  const [SearchParams, setSearchParams] = useSearchParams();
   
   const calculateSelectedState = (elemnt: boolean) => {
     if(elemnt === true) {setSelectedState( selectedState - 1 )}
@@ -80,6 +81,8 @@ type Props = {
 
 const Filter = ({ name, arr, all, selectedState, setSelectedState,  calculateSelectedState }: Props) => {
 
+  const { searchParams, setSearchParams } = useContext(JobContext) as JobsContextInterface;
+
   const [isOpen, setIsOpen] = useState(false)
 
   const [counter, setCounter] = useState(0)
@@ -88,12 +91,19 @@ const Filter = ({ name, arr, all, selectedState, setSelectedState,  calculateSel
   )
   const [hasAll, setHasAll] = useState(all)
 
-  const handleOnChange = (position: number) => {
+  const handleOnChange = (position: number, element: string) => {
     const updatedCheckedState = checkedState.map((item, index) =>
       index === position ? (!item) : (item)
     )
     setCheckedState(updatedCheckedState)
     calculateSelectedState(checkedState[position])
+    if(searchParams.has(`filters[${name}][${position}]`)){
+      searchParams.delete(`filters[${name}][${position}]`)
+    }else{
+      searchParams.set(`filters[${name}][${position}]`, element)
+    }
+    searchParams.set('page','0')
+    setSearchParams(searchParams)
   }
 
   useEffect(() => {
@@ -114,25 +124,31 @@ const Filter = ({ name, arr, all, selectedState, setSelectedState,  calculateSel
     const newArray = checkedState.filter((item) => item === true)
     setSelectedState(selectedState - newArray.length)
     setCheckedState(updatedCheckedState)
-  }
+    for(let position = 0; position<arr.length; position++){
+      if(searchParams.has(`filters[${name}][${position}]`)){
+        searchParams.delete(`filters[${name}][${position}]`)
+        setSearchParams(searchParams)
+      }
+    }
+}
 
   return (
     <div>
       <div className='flex items-center justify-between'>
-        <p className=' flex text-sm font-medium py-4'>{name}{counter>0 &&<p className='bg-blue-100 text-blue-600 mx-2 px-1 rounded'>{counter}</p>}</p>
+        <p className=' flex text-sm font-medium py-4'>{name}{counter>0 && <p className='bg-blue-100 text-blue-600 mx-2 px-1 rounded'>{counter}</p>}</p>
         <motion.button onClick={() => setIsOpen(!isOpen)} animate={{ rotate: isOpen ? 180 : 0 }}>
           <IoIosArrowDropdown className='text-xl' />
         </motion.button>
       </div>
       {isOpen &&
-         <div className=' flex flex-col gap-y-2 mb-4'>
+         <div className='flex flex-col gap-y-2 mb-4'>
           {
           all ? <div className='space-x-2'><input className='mr-auto ml-4 cursor-pointer' type='checkbox' checked={hasAll} onClick={handleAllClick}/><label className={`text-gray-500 text-sm ${all && 'font-black text-gray-800'}`}>All</label></div> : null
           }
            {arr.map((element, index) => {
              return (
               <div className='space-x-2' key={index}>
-                  <input className='mr-auto ml-4 cursor-pointer' type='checkbox' checked={checkedState[index]} onChange={() => handleOnChange(index)} />
+                  <input className='mr-auto ml-4 cursor-pointer' type='checkbox' checked={checkedState[index]} onChange={() => handleOnChange(index, element)} />
                     <label className={`text-gray-500 text-sm ${checkedState[index] && 'font-black text-gray-800'}`}>{element}</label>
               </div>
              )

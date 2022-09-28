@@ -10,10 +10,7 @@ const Jobs = () => {
             <Navbar/>
             <Header/>
             <div className="flex gap-4 mx-20 lg:mx-8 sm:mx-0">
-                <Aside/>
-                <div>
-                    <JobsApi/>
-                </div>
+                <JobsApi/>
             </div>
         </div>
   )

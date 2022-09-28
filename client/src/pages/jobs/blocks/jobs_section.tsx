@@ -6,9 +6,8 @@ import { JobContext, JobsContextInterface } from '../../../api/jobs'
 const JobsSection: React.FC = () => {
 
   const updatePageNumber = (pageNumber: { toString: () => any }) => {
-    setSearchParams({
-      page: pageNumber.toString(),
-    })
+    searchParams.set('page', pageNumber.toString())
+    setSearchParams(searchParams)
   }
   const {jobs, nombrePages, searchParams, setSearchParams} = useContext(JobContext) as JobsContextInterface;
  

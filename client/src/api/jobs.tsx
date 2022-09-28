@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect, createContext } from "react"
 import { URLSearchParamsInit, useSearchParams } from "react-router-dom";
 import JobsSection from "../pages/jobs/blocks/jobs_section";
+import Aside from "../pages/jobs/blocks/aside";
   
 
 
@@ -17,12 +18,13 @@ export type JobsContextInterface = {
   const JobsApi: React.FC = () => {
   const [jobs, setJobs] = useState([])
   const [nombrePages, setNombrePages] = useState(0)
-  let [searchParams, setSearchParams] = useSearchParams({
+  const [searchParams, setSearchParams] = useSearchParams({
     page: '0',
   });
+  
 
   useEffect(() => {
-   axios.get(`http://localhost:3001/Jobs?page=${searchParams.get('page')}`).then((response) => {
+   axios.get(`http://localhost:3001/Jobs?${searchParams}`).then((response) => {
      setJobs(response.data.jobs)
      setNombrePages(response.data.totalPages)
    })
@@ -30,6 +32,7 @@ export type JobsContextInterface = {
  
    return(
       <JobContext.Provider value={{jobs, nombrePages, searchParams, setSearchParams}}>
+        <Aside/>
         <JobsSection/>
       </JobContext.Provider>
    )

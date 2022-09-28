@@ -2,6 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const {Jobs} = require('../models')
+const url = require('url');
 
 
 const getPagination = (page, size) => {
@@ -18,32 +19,26 @@ const getPaginateData = (data, page, limit) => {
     return{totalItems, jobs, totalPages, currentPage};
 }
 
-
 router.get("/", (req, res) => {
-    
+
+    const searchParams = new URLSearchParams(req.url);
+    var arr = [];
+    for (const value of searchParams.values()) {
+        arr.push(value)
+    }
+
     const { page, size } = req.query;
     const { limit, offset } = getPagination(page, size);
 
-    Jobs.findAndCountAll({limit, offset}).then((data) => {
+    Jobs.findAndCountAll(
+        arr.length>1 ? {where: {
+            category: arr
+        }, limit, offset} : {limit, offset}).then((data) => {
         const response = getPaginateData(data, page, limit);
         res.send(response);
     }).catch(err => {
         message:
         err.message || "Some error occurred while retrieving jobs."
     })});
-
-
-router.get("/work_From_Home", (req, res) => {
-
-    const { page, size } = req.query;
-    const { limit, offset } = getPagination(page, size);
-    Jobs.findAndCountAll({where: {category: 'work from home'}, limit, offset}).then((data) => {
-        const response = getPaginateData(data, page ,limit)
-        res.send(response);
-    }).catch(err => {
-        message:
-        err.message || "Some error occured while retrieving jobs"
-    })
-})
 
 module.exports = router;
