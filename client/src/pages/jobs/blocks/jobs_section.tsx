@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import Pagination from './pagination'
 import { JobContext, JobsContextInterface } from '../../../api/jobs'
+import { Link } from 'react-router-dom'
 
 
 const JobsSection: React.FC = () => {
@@ -38,7 +39,7 @@ interface JobProps {
 const Job: React.FC<JobProps> = ({ title, company, location, date, category, description }: JobProps) => {
   return (
         <div className="bg-white border border-gray-300 min-w-2xl shadow-md p-6 pr-12">
-            <p className="text-blue-600 font-medium">{title}</p>
+            <Link to="/jobDetails" target={'_blank'} className="text-blue-600 font-medium">{title}</Link>
             <div className="text-xs flex gap-1 my-1">{company} - <p className="text-gray-600"> {location} </p></div>
             <p className="text-green-600 text-xs my-1">{date}</p>
             <p className="text-sm bg-gray-200 w-max rounded p-1 my-2">{category}</p>

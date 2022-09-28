@@ -1,9 +1,9 @@
-import * as React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Home from '../pages/home/page'
 import Jobs from '../pages/jobs/page'
 import Login from '../pages/login/page'
 import Register from '../pages/register/page'
+import JobDetail from '../pages/job detail/page'
 
 const routes = [
   {
@@ -25,6 +25,11 @@ const routes = [
     id: 4,
     path: '/jobs',
     element: <Jobs/>
+  },
+  {
+    id: 5,
+    path: '/jobDetails',
+    element: <JobDetail/>
   }
 ]
 

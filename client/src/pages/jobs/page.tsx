@@ -1,7 +1,5 @@
 import Navbar from './blocks/navbar'
 import Header from './blocks/header'
-import JobsSection from './blocks/jobs_section'
-import Aside from './blocks/aside'
 import JobsApi from '../../api/jobs'
 
 const Jobs = () => {
